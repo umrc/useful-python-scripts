@@ -2,6 +2,8 @@ import os
 import hashlib
 import requests
 import json
+import time
+
 
 vt_apikey = 'APIKEY'
 folder = 'folder'
@@ -16,9 +18,8 @@ def calculate_file_hash(file_path):
     return sha256_hash.hexdigest()
 
 # Function to scan a file on VirusTotal
-def scan_file_virustotal(file_hash, file_path):
-
-    result = []
+def scan_file_virustotal(file_hash, file_path, result):
+    time.sleep(15)  # 15-second delay
     headers = {
         "accept": "application/json",
         "x-apikey": vt_apikey
@@ -34,23 +35,27 @@ def scan_file_virustotal(file_hash, file_path):
             undetected = last_analysis_stats['undetected']
             detected = malicious_count + sus_count
             
-            print(f'File {file_path} detection: {detected}/{detected + undetected}')
+            print(f'File {file_path} detection: {detected}/{detected + undetected}\n')
+            result.append(f'File {file_path} detection: {detected}/{detected + undetected}\n')
         else:
             print(f"File {file_path} is clean/not found.\n")
+            result.append(f"File {file_path} is clean/not found.\n")
     except exception as e:
         print(f"Error in API request. {e}\n")
 
-    with open('result.txt','w') as f:
-        f.write('\n'.join(result) + '\n')
-
 # Main function to recursively iterate through files in a directory
 def scan_directory(directory_path):
+    result = []
     for root, dirs, files in os.walk(directory_path):
         for file in files:
             file_path = os.path.join(root, file)
             file_hash = calculate_file_hash(file_path)
             print(f"Scanning file: {file_path}")
-            scan_file_virustotal(file_hash, file_path)
+            scan_file_virustotal(file_hash, file_path, result)
+
+    with open('result.txt','w') as f:
+        f.write('\n'.join(result) + '\n')
+
 
 # Path to the directory you want to scan
 folder_path = folder
