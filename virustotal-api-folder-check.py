@@ -33,7 +33,7 @@ def scan_file_virustotal(file_hash, file_path):
             undetected = last_analysis_stats['undetected']
             detected = malicious_count + sus_count
             
-            print(f'Detection: {detected}/{detected + undetected}')
+            print(f'File {file_path} detection: {detected}/{detected + undetected}')
         else:
             print(f"File {file_path} is clean/not found.\n")
     except exception as e:
