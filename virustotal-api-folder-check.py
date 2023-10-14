@@ -18,6 +18,7 @@ def calculate_file_hash(file_path):
 # Function to scan a file on VirusTotal
 def scan_file_virustotal(file_hash, file_path):
 
+    result = []
     headers = {
         "accept": "application/json",
         "x-apikey": vt_apikey
@@ -38,6 +39,9 @@ def scan_file_virustotal(file_hash, file_path):
             print(f"File {file_path} is clean/not found.\n")
     except exception as e:
         print(f"Error in API request. {e}\n")
+
+    with open('result.txt','w') as f:
+        f.write('\n'.join(result) + '\n')
 
 # Main function to recursively iterate through files in a directory
 def scan_directory(directory_path):
